@@ -1,4 +1,5 @@
 ﻿using Lab_0408_Form._1.OverView;
+using Starter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Lab_0408_Form
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Frm_Overview());  //呼叫 Class 建構子方法
+            Application.Run(new FrmSqlConnection());  //呼叫 Class 建構子方法
         }
     }
 }

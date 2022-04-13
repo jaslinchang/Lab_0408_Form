@@ -16,7 +16,8 @@ namespace Lab_0408_Form._1.OverView
         public Frm_Overview()
         {
             InitializeComponent();
-            //dataGridView1.SelectedRows
+            //this.tabControl1.SelectedIndex = this.tabControl1.TabCount -1;
+            this.tabControl1.SelectedIndex = 4;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -129,9 +130,166 @@ namespace Lab_0408_Form._1.OverView
         }
 
         private void button6_Click(object sender, EventArgs e)
-        {
+        { //查詢categories資料表
             this.categoriesTableAdapter1.Fill(nwDataSet1.Categories);
             this.dataGridView2.DataSource = this.nwDataSet1.Categories;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {  //查詢customers資料表
+            this.customersTableAdapter1.Fill(nwDataSet1.Customers);
+            this.dataGridView2.DataSource = this.nwDataSet1.Customers;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {  //查詢產品價格>30
+            this.productsTableAdapter1.FillByUnitPrice(nwDataSet1.Products, 30);  //使用方法呼叫
+            this.dataGridView2.DataSource = this.nwDataSet1.Products;
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {  //新增一筆資料到產品
+            this.productsTableAdapter1.MyInsertProduct("xxx", true, 100);  //使用方法呼叫，內容值直接打所設參數的值
+            this.dataGridView2.DataSource = this.nwDataSet1.Products;
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {  //更新資料表
+            this.productsTableAdapter1.Update(this.nwDataSet1.Products);  
+        }
+
+        //PAGE 3 Binding Sourse
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            //product
+            //this.productsTableAdapter1.Fill(this.nwDataSet1.Products);
+            ////this.dataGridView3.DataSource = this.nwDataSet1.Products;
+
+            //this.bindingSource1.DataSource = this.nwDataSet1.Products;   
+            //this.dataGridView3.DataSource = this.bindingSource1;  //把datagrid的資料存到binding source
+            ////this.label5.Text = $"{this.bindingSource1.Position + 1} / { this.bindingSource1.Count}";
+           
+            //catorgies
+            this.categoriesTableAdapter1.Fill(this.nwDataSet1.Categories);
+            this.bindingSource1.DataSource = this.nwDataSet1.Categories;
+            this.dataGridView3.DataSource = this.bindingSource1;
+
+            this.textBox1.DataBindings.Add("Text", this.bindingSource1, "CategoryName");
+            this.pictureBox1.DataBindings.Add("image", this.bindingSource1, "picture", true);
+
+            //bindingnavigator
+            this.bindingNavigator1.BindingSource = this.bindingSource1;
+
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            this.bindingSource1.Position= 0;
+            //this.label5.Text = $"{this.bindingSource1.Position+1} / { this.bindingSource1.Count}";  //因為第一個是0，所以位置要記得+1
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            //this.bindingSource1.Position -= 1;
+            this.bindingSource1.MovePrevious();
+            //this.label5.Text = $"{this.bindingSource1.Position + 1} / { this.bindingSource1.Count}";
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            //this.bindingSource1.Position += 1;
+            this.bindingSource1.MoveNext();
+            //this.label5.Text = $"{this.bindingSource1.Position + 1} / { this.bindingSource1.Count}";
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            this.bindingSource1.Position = this.bindingSource1.Count-1;
+            //this.label5.Text = $"{this.bindingSource1.Position + 1} / { this.bindingSource1.Count}";
+        }
+
+        private void bindingSource1_CurrentChanged(object sender, EventArgs e)
+        {  //註冊當binding的事件有改變時，就執行他
+            this.label5.Text = $"{this.bindingSource1.Position + 1} / { this.bindingSource1.Count}";
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            FrmTool ft = new FrmTool();
+            ft.Show();
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            //連線呼叫資料庫
+            this.categoriesTableAdapter1.Fill(this.nwDataSet1.Categories);
+            this.productsTableAdapter1.Fill(this.nwDataSet1.Products);
+            this.customersTableAdapter1.Fill(nwDataSet1.Customers);
+
+            this.dataGridView4.DataSource = this.nwDataSet1.Categories;
+            this.dataGridView5.DataSource = this.nwDataSet1.Products;
+            this.dataGridView6.DataSource = this.nwDataSet1.Customers;
+
+            //=============================================
+            this.listBox2.Items.Clear();
+            
+            //Column schema
+            //叫資料表出來       
+            for(int i = 0; i < this.nwDataSet1.Tables.Count ; i++)
+            {
+                DataTable table= this.nwDataSet1.Tables[i];  //設一個變數把table存在裡面
+                this.listBox2.Items.Add(table.TableName);
+
+                //叫資料表內的欄位  Column
+                string s = "";
+                for(int column = 0; column < table.Columns.Count ; column++)  //當column<那個資料表內的欄位數時
+                {
+                    s += table.Columns[column].ColumnName + "  ";  //取得集合的name
+                }
+                this.listBox2.Items.Add(s);
+
+                //叫資料表的行數  //Rows
+                //for (int row = 0; row < table.Rows.Count; row++)
+                //{
+                //    this.listBox2.Items.Add(table.Rows[row][0]);  //呼叫第幾個row的第幾個資料行
+                //}
+                string a = "";
+                for (int row = 0; row < table.Rows.Count; row++)
+                {
+                    for (int k = 0; k < table.Columns.Count; k++)
+                    {
+
+                        a += table.Rows[row][k].ToString();
+                        this.listBox2.Items.Add(a);
+                    }
+
+                }
+
+                this.listBox2.Items.Add("=================================");
+            }
+
+        }
+
+        private void button18_Click(object sender, EventArgs e)
+        {  //抓product資料表第一個欄位的productname
+            //weak type
+            MessageBox.Show(this.nwDataSet1.Products.Rows[0]["productname"].ToString());
+            MessageBox.Show(this.nwDataSet1.Products.Rows[0][1].ToString());
+            //strong type
+            MessageBox.Show(this.nwDataSet1.Products[0].ProductName);
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {  //寫XML檔，預設會存在跟exe同樣的地點
+            this.nwDataSet1.Products.WriteXml("Product.xml", XmlWriteMode.WriteSchema);
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+            this.nwDataSet1.Clear();
+            this.nwDataSet1.Products.ReadXml("Product.xml");
+            this.dataGridView5.DataSource = this.nwDataSet1.Products;
         }
     }
 }
